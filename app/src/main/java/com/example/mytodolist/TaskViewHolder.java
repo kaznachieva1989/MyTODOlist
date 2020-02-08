@@ -28,7 +28,7 @@ public class TaskViewHolder extends RecyclerView.ViewHolder implements ItemClick
     public void onBind(Task task){
         title.setText(task.title);
         description.setText(task.description);
-        deadline.setText(task.deadline);
+        deadline.setText((CharSequence) task.deadline);
     }
 
     @Override

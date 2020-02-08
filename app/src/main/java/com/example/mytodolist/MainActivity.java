@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK && requestCode== 42){
+        if (resultCode == RESULT_OK && requestCode == 42) {
             Task task = (Task) data.getSerializableExtra("task");
             tasks.add(task);
             adapter.notifyDataSetChanged();
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         if (resultCode == RESULT_OK && requestCode == 43) {
             Task task = (Task) data.getSerializableExtra("changedTasks");
             tasks.remove(tasks.get(position));
-            tasks.add(task);
+            tasks.add(position, task);
             adapter.notifyDataSetChanged();
             Storage.save(tasks, this);
         }
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
 
     @Override
     public void onItemClick(int position) {
+        this.position = position;
         Log.d("ololo", "onItemClick: clicked" + position);
         Intent intent = new Intent(this, ChangeTaskActivity.class);
         intent.putExtra("tasksss", tasks.get(position));

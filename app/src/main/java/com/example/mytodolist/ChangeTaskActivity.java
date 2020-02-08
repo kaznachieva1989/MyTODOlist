@@ -2,24 +2,26 @@ package com.example.mytodolist;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
-public class ChangeTaskActivity extends AppCompatActivity {
-    ArrayList<Task> tasks = new ArrayList<>();
-
+public class ChangeTaskActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+    Task task = new Task();
     EditText title;
     EditText description;
     EditText deadline;
 
-    Task task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +33,19 @@ public class ChangeTaskActivity extends AppCompatActivity {
         description = findViewById(R.id.task_description);
         deadline = findViewById(R.id.task_deadline);
 
+        findViewById(R.id.task_deadline).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+
         getIncomingIntent();
 
         Button changeBtn = findViewById(R.id.task_change);
         changeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Task task = new Task();
 
                 if (title.getText().toString().trim().equals("")) {
                     showMessage("Input title please");
@@ -53,7 +61,13 @@ public class ChangeTaskActivity extends AppCompatActivity {
                     task.description = description.getText().toString().trim();
                 }
 
-                task.deadline = deadline.getText().toString();
+                if (deadline.getText().toString().trim().equals("")) {
+                    showMessage("Input deadline please");
+                    return;
+                } else {
+                    task.deadline = deadline.getText().toString();
+                }
+
                 Log.d("ololo", "Change ");
                 Intent intent = new Intent();
                 intent.putExtra("changedTasks", task);
@@ -70,11 +84,28 @@ public class ChangeTaskActivity extends AppCompatActivity {
 
     public void getIncomingIntent() {
         Intent intent = getIntent();
-        task = (Task)intent.getSerializableExtra("tasksss");
+        task = (Task) intent.getSerializableExtra("tasksss");
         if (task != null) {
             title.setText(task.title);
             description.setText(task.description);
-            deadline.setText(task.deadline);
+            deadline.setText((CharSequence) task.deadline);
         }
     }
+
+    public void showDatePickerDialog() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                this,
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        String date = month + "/" + dayOfMonth + "/" + year;
+        deadline.setText(date);
+    }
 }
+
